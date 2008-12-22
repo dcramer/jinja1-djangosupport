@@ -1,0 +1,4 @@
+include Makefile CHANGES LICENSE AUTHORS TODO ez_setup.py
+include docs/html/*
+include docs/src/*.txt
+recursive-include tests *
