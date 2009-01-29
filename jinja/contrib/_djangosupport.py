@@ -172,15 +172,18 @@ def render_to_response(template, context=None, request=None,
     return HttpResponse(content, mimetype)
 
 
-def render_to_string(template, context=None, request=None):
+def render_to_string(template, context={}, request=None):
     """Render a template to a string."""
     assert env is not None, 'Jinja not configured for django'
-    if context is None:
-        context = {}
     if request is not None:
-        context['request'] = request
+        # It's very important to apply these in a specific order
+        default_context = {
+            'request': request,
+        }
         for processor in get_standard_processors():
-            context.update(processor(request))
+            default_context.update(processor(request))
+        default_context.update(context)
+        context = default_context
     template = env.get_template(template)
     return template.render(context)
 
