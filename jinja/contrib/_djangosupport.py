@@ -163,7 +163,7 @@ def configure(convert_filters=DEFAULT_FILTERS, loader=None, **options):
         except ImportError:
             pass
 
-def render_to_response(template, context=None, request=None,
+def render_to_response(template, context={}, request=None,
                        mimetype=None):
     """This function will take a few variables and spit out a full webpage."""
     content = render_to_string(template, context, request)
