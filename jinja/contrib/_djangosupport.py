@@ -131,6 +131,23 @@ DEFAULT_FILTERS = (
     'django.contrib.humanize.templatetags.humanize.intcomma'
 )
 
+# {% url %} template tag (used as {{ url }})
+from django.core.urlresolvers import reverse, NoReverseMatch
+def url(view_name, *args, **kwargs):
+    url = ''
+    try:
+        url = reverse(view_name, args=args, kwargs=kwargs)
+    except NoReverseMatch:
+        project_name = settings.SETTINGS_MODULE.split('.')[0]
+        try:
+            url = reverse(project_name + '.' + view_name,
+                          args=args, kwargs=kwargs)
+        except NoReverseMatch:
+            raise
+    
+    return url
+
+
 def configure(convert_filters=DEFAULT_FILTERS, loader=None, **options):
     """
     Initialize the system.
@@ -155,6 +172,9 @@ def configure(convert_filters=DEFAULT_FILTERS, loader=None, **options):
     # convert requested filters
     for name in convert_filters:
         env.filters[name] = convert_django_filter(name)
+
+    # Register URL template tag
+    env.globals[url] = url
 
     # import templatetags of installed apps
     for app in settings.INSTALLED_APPS:
